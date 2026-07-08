@@ -1,61 +1,98 @@
-# Explorador de paises y datos importantes
+# Laboratorio - Consumo de una API publica
 
-Proyecto web hecho con HTML, CSS y JavaScript vanilla. Permite buscar paises, consultar datos desde una API publica y guardar favoritos de forma persistente en el navegador.
+## Nombre del proyecto
 
-## API utilizada
+Buscador de universidades del mundo por pais.
 
-Se usa la API publica [countries.dev](https://countries.dev), que no requiere API key.
+## Descripcion
 
-Endpoint principal:
+Aplicacion web modular que permite consultar universidades de distintos paises usando datos publicos en formato JSON. El usuario escribe el nombre de un pais, visualiza las universidades encontradas en tarjetas y puede guardar instituciones importantes como favoritas para revisarlas despues, incluso si recarga la pagina.
+
+El proyecto corresponde al caso propuesto: **Buscador de universidades por pais**.
+
+## API o fuente publica utilizada
+
+Se usa el proyecto publico [Hipo University Domains List](https://github.com/Hipo/university-domains-list), que contiene universidades del mundo, dominios web, paises y codigos de pais.
+
+Para que funcione correctamente en GitHub Pages, la aplicacion consulta el archivo JSON publico por HTTPS:
 
 ```text
-https://countries.dev/name/{name}
+https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json
 ```
+
+La fuente oficial tambien documenta una API hospedada por Hipo Labs, pero esa URL responde por HTTP. Por eso se usa el JSON oficial en GitHub Raw, que evita problemas de contenido mixto en paginas publicadas con HTTPS.
 
 ## Funcionalidades principales
 
-- Busqueda de paises por nombre.
-- Consumo de API con `fetch`, `async/await` y datos JSON.
-- Resultados mostrados en tarjetas visuales.
-- Datos por pais: nombre, bandera, capital, region, subregion, poblacion, area, moneda e idioma.
-- Guardado de favoritos en `localStorage`.
+- Busqueda de universidades por pais desde un input.
+- Consumo de datos publicos con `fetch`.
+- Uso de `async/await` para manejar la consulta.
+- Lectura y procesamiento de datos JSON.
+- Filtro dinamico por pais.
+- Renderizado de resultados con manipulacion del DOM.
+- Visualizacion de universidades en tarjetas.
+- Datos mostrados: nombre, pais, codigo del pais, provincia o estado, dominio y sitio web.
+- Guardado de universidades favoritas usando `localStorage`.
 - Recuperacion automatica de favoritos al recargar la pagina.
 - Prevencion de favoritos repetidos.
-- Eliminacion de favoritos.
-- Seccion de ultima consulta realizada.
-- Recuperacion automatica de la ultima busqueda guardada.
-- Manejo de errores y estados vacios.
-- Diseno responsive para celulares, tablets y computadores.
+- Eliminacion de favoritos guardados.
+- Seccion de ultima consulta realizada guardada en `localStorage`.
+- Opcion para limpiar la ultima consulta guardada.
+- Manejo basico de errores y estados vacios.
+- Diseno responsive para celular, tablet y computador.
+
+## Manejo de errores
+
+La aplicacion muestra mensajes claros cuando:
+
+- El usuario intenta buscar sin escribir nada.
+- La fuente de datos no responde.
+- La busqueda no tiene resultados.
+- El usuario intenta guardar una universidad repetida.
+- Existe un problema al cargar o procesar los datos JSON.
 
 ## Estructura del proyecto
 
 ```text
 Laboratorio_API/
-├── index.html
-├── README.md
-├── css/
-│   └── styles.css
-├── js/
-│   ├── api.js
-│   ├── ui.js
-│   ├── storage.js
-│   └── main.js
-└── assets/
-    └── img/
+|-- index.html
+|-- README.md
+|-- css/
+|   |-- styles.css
+|-- js/
+|   |-- api.js
+|   |-- ui.js
+|   |-- storage.js
+|   |-- main.js
+|-- assets/
+    |-- img/
 ```
 
-## Estructura modular
+## Explicacion de la estructura modular
 
-- `index.html`: contiene la estructura principal de la pagina.
-- `css/styles.css`: contiene el diseno visual, las tarjetas, botones y estilos responsive.
-- `js/api.js`: contiene las funciones para consultar la API.
-- `js/ui.js`: contiene las funciones para renderizar resultados, favoritos y mensajes.
-- `js/storage.js`: contiene las funciones para manejar `localStorage`.
-- `js/main.js`: conecta los eventos, la busqueda, los favoritos y el flujo general de la app.
+- `index.html`: define la estructura principal de la interfaz.
+- `css/styles.css`: contiene el diseno visual, tarjetas, botones, mensajes y estilos responsive.
+- `js/api.js`: consulta el JSON publico con `fetch` y `async/await`, filtra por pais y normaliza los datos.
+- `js/ui.js`: crea tarjetas, renderiza resultados, favoritos, mensajes y ultima consulta.
+- `js/storage.js`: guarda, lee y elimina favoritos y ultima consulta desde `localStorage`.
+- `js/main.js`: conecta los eventos del formulario, botones y flujo principal de la aplicacion.
+
+## Requisitos evidenciados
+
+- Consumo de fuente publica de datos.
+- `fetch`.
+- `async/await`.
+- Manejo de datos JSON.
+- Modulos ES con `import` y `export`.
+- `localStorage`.
+- Manipulacion del DOM.
+- Manejo basico de errores.
+- Interfaz responsive.
+- Preparado para publicacion en GitHub Pages.
 
 ## Como abrir el proyecto
 
-Como el proyecto usa modulos ES, lo ideal es abrirlo desde un servidor local.
+Por usar modulos ES, se recomienda abrirlo desde un servidor local.
 
 Opcion rapida con Python:
 
@@ -69,11 +106,9 @@ Despues abre en el navegador:
 http://localhost:5500
 ```
 
-Tambien funciona correctamente al publicarlo en GitHub Pages.
+## Publicacion en GitHub Pages
 
-## Como publicarlo en GitHub Pages
-
-1. Sube el proyecto a un repositorio de GitHub.
+1. Sube el proyecto al repositorio de GitHub.
 2. Entra al repositorio en GitHub.
 3. Ve a `Settings`.
 4. Abre la seccion `Pages`.
@@ -81,7 +116,30 @@ Tambien funciona correctamente al publicarlo en GitHub Pages.
 6. Selecciona la rama `main`.
 7. Selecciona la carpeta `/root`.
 8. Guarda los cambios.
-9. GitHub generara una URL publica para abrir el proyecto.
+9. Abre el enlace generado por GitHub Pages.
+
+Repositorio:
+
+```text
+https://github.com/Dandres1700/Laboratorio-Consumo-de-una-API-p-blica
+```
+
+Pagina publicada:
+
+```text
+https://dandres1700.github.io/Laboratorio-Consumo-de-una-API-p-blica/
+```
+
+## Evidencias para la entrega
+
+La entrega final debe incluir:
+
+- Enlace del repositorio en GitHub.
+- Enlace de la pagina publicada en GitHub Pages.
+- Captura de la interfaz funcionando.
+- Captura de una busqueda realizada por pais.
+- Captura de universidades guardadas en favoritos.
+- Breve explicacion de la estructura modular del proyecto.
 
 ## Tecnologias usadas
 

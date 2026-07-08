@@ -4,13 +4,12 @@ export const elements = {
   searchButton: document.querySelector("#search-button"),
   message: document.querySelector("#message"),
   lastSearch: document.querySelector("#last-search"),
+  clearLastSearchButton: document.querySelector("#clear-last-search-button"),
   resultsGrid: document.querySelector("#results-grid"),
   resultsCounter: document.querySelector("#results-counter"),
   favoritesGrid: document.querySelector("#favorites-grid"),
   favoritesCounter: document.querySelector("#favorites-counter"),
 };
-
-const numberFormatter = new Intl.NumberFormat("es-CO");
 
 export function setLoading(isLoading) {
   elements.searchButton.disabled = isLoading;
@@ -36,20 +35,25 @@ export function renderLastSearch(searchTerm) {
   elements.lastSearch.textContent = searchTerm
     ? searchTerm
     : "Todavia no hay consultas guardadas.";
+  elements.clearLastSearchButton.disabled = !searchTerm;
 }
 
-export function renderResults(countries, favoriteIds = []) {
+export function renderResults(universities, favoriteIds = []) {
   elements.resultsGrid.innerHTML = "";
-  elements.resultsCounter.textContent = formatCounter(countries.length, "pais", "paises");
+  elements.resultsCounter.textContent = formatCounter(
+    universities.length,
+    "universidad",
+    "universidades"
+  );
 
-  if (countries.length === 0) {
+  if (universities.length === 0) {
     elements.resultsGrid.appendChild(createEmptyState("No hay resultados para mostrar."));
     return;
   }
 
-  countries.forEach((country) => {
-    const isFavorite = favoriteIds.includes(country.id);
-    const card = createCountryCard(country, {
+  universities.forEach((university) => {
+    const isFavorite = favoriteIds.includes(university.id);
+    const card = createUniversityCard(university, {
       action: "save-favorite",
       buttonText: isFavorite ? "Guardado en favoritos" : "Guardar favorito",
       buttonClass: isFavorite ? "button--secondary" : "button--primary",
@@ -72,8 +76,8 @@ export function renderFavorites(favorites) {
     return;
   }
 
-  favorites.forEach((country) => {
-    const card = createCountryCard(country, {
+  favorites.forEach((university) => {
+    const card = createUniversityCard(university, {
       action: "remove-favorite",
       buttonText: "Eliminar favorito",
       buttonClass: "button--danger",
@@ -83,45 +87,42 @@ export function renderFavorites(favorites) {
   });
 }
 
-function createCountryCard(country, buttonOptions) {
+function createUniversityCard(university, buttonOptions) {
   const card = document.createElement("article");
-  card.className = "country-card";
+  card.className = "university-card";
 
   const header = document.createElement("div");
-  header.className = "country-card__header";
+  header.className = "university-card__header";
 
-  const flag = createFlagElement(country);
+  const badge = createUniversityBadge(university);
 
   const titleGroup = document.createElement("div");
-  titleGroup.className = "country-card__title";
+  titleGroup.className = "university-card__title";
 
   const name = document.createElement("h3");
-  name.textContent = country.name;
+  name.textContent = university.name;
 
   const code = document.createElement("span");
-  code.className = "country-card__code";
-  code.textContent = country.alpha3Code || country.alpha2Code || "N/D";
+  code.className = "university-card__code";
+  code.textContent = university.countryCode;
 
   titleGroup.append(name, code);
-  header.append(flag, titleGroup);
+  header.append(badge, titleGroup);
 
   const dataList = document.createElement("dl");
-  dataList.className = "country-card__data";
+  dataList.className = "university-card__data";
 
-  addDataItem(dataList, "Capital", country.capital);
-  addDataItem(dataList, "Region", country.region);
-  addDataItem(dataList, "Subregion", country.subregion);
-  addDataItem(dataList, "Poblacion", formatNumber(country.population));
-  addDataItem(dataList, "Area", `${formatNumber(country.area)} km2`);
-  addDataItem(dataList, "Moneda", formatCurrencies(country.currencies));
-  addDataItem(dataList, "Idioma", formatLanguages(country.languages));
+  addDataItem(dataList, "Pais", university.country);
+  addDataItem(dataList, "Provincia", university.stateProvince);
+  addDataItem(dataList, "Dominio", formatList(university.domains));
+  addLinkItem(dataList, "Sitio web", university.firstWebPage);
 
   const button = document.createElement("button");
   button.className = `button ${buttonOptions.buttonClass}`;
   button.type = "button";
   button.textContent = buttonOptions.buttonText;
   button.dataset.action = buttonOptions.action;
-  button.dataset.countryId = country.id;
+  button.dataset.countryId = university.id;
 
   card.append(header, dataList, button);
   return card;
@@ -129,7 +130,7 @@ function createCountryCard(country, buttonOptions) {
 
 function addDataItem(dataList, label, value) {
   const wrapper = document.createElement("div");
-  wrapper.className = "country-card__item";
+  wrapper.className = "university-card__item";
 
   const term = document.createElement("dt");
   term.textContent = label;
@@ -141,30 +142,36 @@ function addDataItem(dataList, label, value) {
   dataList.appendChild(wrapper);
 }
 
-function createFlagElement(country) {
-  if (!country.flag) {
-    return createFlagPlaceholder(country);
+function addLinkItem(dataList, label, url) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "university-card__item";
+
+  const term = document.createElement("dt");
+  term.textContent = label;
+
+  const description = document.createElement("dd");
+
+  if (url) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = url;
+    description.appendChild(link);
+  } else {
+    description.textContent = "No disponible";
   }
 
-  const flag = document.createElement("img");
-  flag.className = "country-card__flag";
-  flag.src = country.flag;
-  flag.alt = `Bandera de ${country.name}`;
-  flag.loading = "lazy";
-  flag.addEventListener("error", () => {
-    flag.replaceWith(createFlagPlaceholder(country));
-  });
-
-  return flag;
+  wrapper.append(term, description);
+  dataList.appendChild(wrapper);
 }
 
-function createFlagPlaceholder(country) {
-  const placeholder = document.createElement("div");
-  placeholder.className = "country-card__flag country-card__flag--placeholder";
-  placeholder.textContent = country.alpha2Code || "N/D";
-  placeholder.setAttribute("role", "img");
-  placeholder.setAttribute("aria-label", `Bandera no disponible para ${country.name}`);
-  return placeholder;
+function createUniversityBadge(university) {
+  const badge = document.createElement("div");
+  badge.className = "university-card__badge";
+  badge.textContent = getInitials(university.name);
+  badge.setAttribute("aria-hidden", "true");
+  return badge;
 }
 
 function createEmptyState(text) {
@@ -174,32 +181,22 @@ function createEmptyState(text) {
   return emptyState;
 }
 
-function formatNumber(value) {
-  return value ? numberFormatter.format(value) : "No disponible";
-}
-
-function formatCurrencies(currencies) {
-  if (!currencies.length) {
+function formatList(items) {
+  if (!items.length) {
     return "No disponible";
   }
 
-  return currencies
-    .map((currency) => {
-      const symbol = currency.symbol ? ` (${currency.symbol})` : "";
-      return `${currency.name || currency.code || "No disponible"}${symbol}`;
-    })
-    .join(", ");
+  return items.join(", ");
 }
 
-function formatLanguages(languages) {
-  if (!languages.length) {
-    return "No disponible";
-  }
-
-  return languages
-    .map((language) => language.name || language.nativeName)
+function getInitials(name) {
+  return name
+    .split(" ")
     .filter(Boolean)
-    .join(", ");
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 }
 
 function formatCounter(amount, singular, plural) {

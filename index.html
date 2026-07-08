@@ -3,21 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Explorador de paises</title>
+    <title>Laboratorio API - Universidades del mundo</title>
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
     <header class="app-header">
       <div class="app-header__content">
-        <p class="app-kicker">countries.dev</p>
-        <h1>Explorador de paises</h1>
+        <p class="app-kicker">Laboratorio API publica</p>
+        <h1>Universidades del mundo</h1>
       </div>
     </header>
 
     <main class="app-main">
       <section class="search-section" aria-labelledby="search-title">
         <div class="section-heading">
-          <h2 id="search-title">Buscar paises</h2>
+          <h2 id="search-title">Buscar universidades por pais</h2>
         </div>
 
         <form class="search-form" id="search-form">
@@ -27,7 +27,7 @@
             id="country-input"
             name="country"
             autocomplete="off"
-            placeholder="Ejemplo: Colombia"
+            placeholder="Ejemplo: Ecuador, España, Estados Unidos"
           />
           <button class="button button--primary" id="search-button" type="submit">
             Buscar
@@ -40,6 +40,9 @@
       <section class="last-search-section" aria-labelledby="last-search-title">
         <div class="section-heading">
           <h2 id="last-search-title">&Uacute;ltima consulta realizada</h2>
+          <button class="button button--ghost" id="clear-last-search-button" type="button">
+            Limpiar
+          </button>
         </div>
         <p class="last-search" id="last-search">Todavia no hay consultas guardadas.</p>
       </section>
@@ -47,9 +50,9 @@
       <section class="results-section" aria-labelledby="results-title">
         <div class="section-heading">
           <h2 id="results-title">Resultados</h2>
-          <span class="counter" id="results-counter">0 paises</span>
+          <span class="counter" id="results-counter">0 universidades</span>
         </div>
-        <div class="country-grid" id="results-grid"></div>
+        <div class="card-grid" id="results-grid"></div>
       </section>
 
       <section class="favorites-section" aria-labelledby="favorites-title">
@@ -57,7 +60,7 @@
           <h2 id="favorites-title">Favoritos</h2>
           <span class="counter" id="favorites-counter">0 favoritos</span>
         </div>
-        <div class="country-grid" id="favorites-grid"></div>
+        <div class="card-grid" id="favorites-grid"></div>
       </section>
     </main>
 

@@ -1,6 +1,7 @@
-import { searchCountriesByName } from "./api.js";
+import { searchUniversitiesByCountry } from "./api.js";
 import {
   addFavorite,
+  clearLastSearch,
   getFavorites,
   getLastSearch,
   removeFavorite,
@@ -17,7 +18,9 @@ import {
   showMessage,
 } from "./ui.js";
 
-let currentResults = [];
+const appState = {
+  currentResults: [],
+};
 
 document.addEventListener("DOMContentLoaded", initApp);
 
@@ -31,20 +34,21 @@ function initApp() {
   elements.searchForm.addEventListener("submit", handleSearchSubmit);
   elements.resultsGrid.addEventListener("click", handleSaveFavorite);
   elements.favoritesGrid.addEventListener("click", handleRemoveFavorite);
+  elements.clearLastSearchButton.addEventListener("click", handleClearLastSearch);
 
   if (lastSearch) {
     setSearchInputValue(lastSearch);
-    searchAndRenderCountries(lastSearch, false);
+    searchAndRenderUniversities(lastSearch, false);
   }
 }
 
 async function handleSearchSubmit(event) {
   event.preventDefault();
   const searchTerm = elements.searchInput.value.trim();
-  await searchAndRenderCountries(searchTerm, true);
+  await searchAndRenderUniversities(searchTerm, true);
 }
 
-async function searchAndRenderCountries(searchTerm, shouldSaveSearch) {
+async function searchAndRenderUniversities(searchTerm, shouldSaveSearch) {
   clearMessage();
 
   if (!searchTerm) {
@@ -55,24 +59,24 @@ async function searchAndRenderCountries(searchTerm, shouldSaveSearch) {
   setLoading(true);
 
   try {
-    const countries = await searchCountriesByName(searchTerm);
-    currentResults = countries;
+    const universities = await searchUniversitiesByCountry(searchTerm);
+    appState.currentResults = universities;
 
     if (shouldSaveSearch) {
       saveLastSearch(searchTerm);
       renderLastSearch(searchTerm);
     }
 
-    renderResults(currentResults, getFavoriteIds());
+    renderResults(appState.currentResults, getFavoriteIds());
 
-    if (countries.length === 0) {
-      showMessage("No se encontraron resultados para esa busqueda.", "warning");
+    if (universities.length === 0) {
+      showMessage("No se encontraron universidades para ese pais.", "warning");
       return;
     }
 
     showMessage("Consulta realizada correctamente.", "success");
   } catch (error) {
-    currentResults = [];
+    appState.currentResults = [];
     renderResults([]);
     showMessage(error.message || "Existe un error al cargar datos.", "error");
   } finally {
@@ -87,16 +91,18 @@ function handleSaveFavorite(event) {
     return;
   }
 
-  const country = currentResults.find((item) => item.id === button.dataset.countryId);
+  const university = appState.currentResults.find(
+    (item) => item.id === button.dataset.countryId
+  );
 
-  if (!country) {
-    showMessage("No se pudo guardar este pais.", "error");
+  if (!university) {
+    showMessage("No se pudo guardar esta universidad.", "error");
     return;
   }
 
-  const result = addFavorite(country);
+  const result = addFavorite(university);
   renderFavorites(result.favorites);
-  renderResults(currentResults, getFavoriteIds());
+  renderResults(appState.currentResults, getFavoriteIds());
   showMessage(result.message, result.saved ? "success" : "warning");
 }
 
@@ -109,10 +115,17 @@ function handleRemoveFavorite(event) {
 
   const updatedFavorites = removeFavorite(button.dataset.countryId);
   renderFavorites(updatedFavorites);
-  renderResults(currentResults, getFavoriteIds());
+  renderResults(appState.currentResults, getFavoriteIds());
   showMessage("Favorito eliminado correctamente.", "success");
 }
 
+function handleClearLastSearch() {
+  clearLastSearch();
+  renderLastSearch("");
+  setSearchInputValue("");
+  showMessage("Ultima consulta eliminada correctamente.", "success");
+}
+
 function getFavoriteIds() {
-  return getFavorites().map((country) => country.id);
+  return getFavorites().map((university) => university.id);
 }

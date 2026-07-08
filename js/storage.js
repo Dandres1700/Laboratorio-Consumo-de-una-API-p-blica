@@ -1,5 +1,5 @@
-const FAVORITES_KEY = "countryExplorerFavorites";
-const LAST_SEARCH_KEY = "countryExplorerLastSearch";
+const FAVORITES_KEY = "universityExplorerFavorites";
+const LAST_SEARCH_KEY = "universityExplorerLastSearch";
 
 export function getFavorites() {
   const favorites = readJson(FAVORITES_KEY, []);
@@ -14,7 +14,7 @@ export function addFavorite(country) {
     return {
       saved: false,
       favorites,
-      message: "Este pais ya esta guardado en favoritos.",
+      message: "Esta universidad ya esta guardada en favoritos.",
     };
   }
 
@@ -24,7 +24,7 @@ export function addFavorite(country) {
   return {
     saved: true,
     favorites: updatedFavorites,
-    message: "Pais guardado como favorito.",
+    message: "Universidad guardada como favorita.",
   };
 }
 
@@ -43,6 +43,10 @@ export function getLastSearch() {
 
 export function saveLastSearch(searchTerm) {
   localStorage.setItem(LAST_SEARCH_KEY, searchTerm.trim());
+}
+
+export function clearLastSearch() {
+  localStorage.removeItem(LAST_SEARCH_KEY);
 }
 
 function readJson(key, fallbackValue) {
