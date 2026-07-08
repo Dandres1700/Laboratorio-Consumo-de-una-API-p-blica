@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explorador de paises</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header__content">
+        <p class="app-kicker">countries.dev</p>
+        <h1>Explorador de paises</h1>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="search-section" aria-labelledby="search-title">
+        <div class="section-heading">
+          <h2 id="search-title">Buscar paises</h2>
+        </div>
+
+        <form class="search-form" id="search-form">
+          <label class="sr-only" for="country-input">Nombre del pais</label>
+          <input
+            type="search"
+            id="country-input"
+            name="country"
+            autocomplete="off"
+            placeholder="Ejemplo: Colombia"
+          />
+          <button class="button button--primary" id="search-button" type="submit">
+            Buscar
+          </button>
+        </form>
+
+        <p class="message" id="message" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <section class="last-search-section" aria-labelledby="last-search-title">
+        <div class="section-heading">
+          <h2 id="last-search-title">&Uacute;ltima consulta realizada</h2>
+        </div>
+        <p class="last-search" id="last-search">Todavia no hay consultas guardadas.</p>
+      </section>
+
+      <section class="results-section" aria-labelledby="results-title">
+        <div class="section-heading">
+          <h2 id="results-title">Resultados</h2>
+          <span class="counter" id="results-counter">0 paises</span>
+        </div>
+        <div class="country-grid" id="results-grid"></div>
+      </section>
+
+      <section class="favorites-section" aria-labelledby="favorites-title">
+        <div class="section-heading">
+          <h2 id="favorites-title">Favoritos</h2>
+          <span class="counter" id="favorites-counter">0 favoritos</span>
+        </div>
+        <div class="country-grid" id="favorites-grid"></div>
+      </section>
+    </main>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
